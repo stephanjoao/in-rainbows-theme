@@ -2,5 +2,9 @@
 .vscode-test/**
 .editorconfig
 .gitignore
+cover.txt
+cores.json
+icon.png
+parse_colors.py
 scripts/**
 vsc-extension-quickstart.md

@@ -4,6 +4,8 @@ All notable changes to the "in-rainbows-theme" extension will be documented in t
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-05-11
+
 - Reduced dark theme neutrals to the Eigengrau base plus alpha variants.
 - Removed unused Eigengrau tone entries from the shared palette.
 - Moved dark theme controls and major UI surfaces back to the Eigengrau base.
