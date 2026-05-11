@@ -69,8 +69,7 @@ function isNeutralColorName(name) {
   return name === "pure-black"
     || name === "pure-white"
     || name === "rainbow-white"
-    || name === "eigengrau"
-    || name.startsWith("eigengrau-");
+    || name === "eigengrau";
 }
 
 function isRadioheadColorName(name) {
@@ -83,13 +82,14 @@ const [manifest, palette, testWorkspace] = await Promise.all([
   readJson(".vscode/theme-test.code-workspace")
 ]);
 
+const packageDescription = "A VS Code theme inspired by the critically and publicly aclaimed album 'In Rainbows' by Radiohead.";
 const contributedThemes = manifest.contributes?.themes ?? [];
 const contributedLabels = contributedThemes.map((item) => item.label);
 const allowedUiThemes = new Set(["vs", "vs-dark", "hc-black", "hc-light"]);
 
 assert(manifest.name, "package.json must include a name.");
 assert(manifest.displayName, "package.json must include a displayName.");
-assert(manifest.description && !manifest.description.includes("TODO"), "package.json must include a real description.");
+assert(manifest.description === packageDescription, "package.json description must stay unchanged.");
 assert(manifest.publisher, "package.json must include a publisher.");
 assert(manifest.license && manifest.license !== "TODO", "package.json must include a real license value.");
 assert(manifest.repository?.url && !manifest.repository.url.includes("TODO"), "package.json must include a real repository URL.");

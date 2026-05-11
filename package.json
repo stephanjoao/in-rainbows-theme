@@ -1,9 +1,9 @@
 {
   "name": "in-rainbows-theme",
   "displayName": "In Rainbows Theme",
-  "description": "VS Code color themes inspired by Radiohead's In Rainbows.",
+  "description": "A VS Code theme inspired by the critically and publicly aclaimed album 'In Rainbows' by Radiohead.",
   "version": "0.0.2",
-  "icon": "icon.png",
+  "icon": "IN RAINBOWS.png",
   "publisher": "joaostephan",
   "license": "UNLICENSED",
   "galleryBanner": {
