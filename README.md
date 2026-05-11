@@ -1,16 +1,13 @@
-# in-rainbows-theme README
+# In Rainbows Theme
 
-## Working with Markdown
+A dark Visual Studio Code theme inspired by Radiohead's *In Rainbows*.
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+## Development
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+- Theme file: `themes/dark.json`
+- Palette reference: `colors.json`
+- Local validation: `npm run validate`
 
-## For more information
+## Testing Locally
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Open this repository in VS Code and press `F5` to launch an Extension Development Host. The debug workspace selects `In Rainbows Dark` automatically.

@@ -1,18 +1,18 @@
 {
   "name": "in-rainbows-theme",
   "displayName": "In Rainbows Theme",
-  "description": "A VS Code theme inspired by the critically and publicly aclaimed album 'In Rainbows' by Radiohead",
+  "description": "A VS Code dark theme inspired by Radiohead's In Rainbows.",
   "version": "0.0.2",
   "icon": "icon.png",
   "publisher": "joaostephan",
-  "license": "TODO",
+  "license": "UNLICENSED",
   "galleryBanner": {
     "color": "#000000",
     "theme": "dark"
   },
   "repository": {
     "type": "git",
-    "url": "TODO"
+    "url": "https://github.com/stephanjoao/in-rainbows-theme.git"
   },
   "engines": {
     "vscode": "^1.99.0"
@@ -26,6 +26,10 @@
     "in rainbows",
     "radiohead"
   ],
+  "scripts": {
+    "validate": "node scripts/validate-theme.mjs",
+    "vscode:prepublish": "npm run validate"
+  },
   "contributes": {
     "themes": [
       {

@@ -1,9 +1,10 @@
 {
-	"maize": "#fcf050",
-	"tufts-blue": "#4091da",
-	"flame": "#ea6135",
-	"mantis": "#55b64f",
-	"amber": "#f9be1c",
-	"off-red": "#fe0000",
-	"non-photo-blue": "#a2e7fa"
+  "eigengrau": "#16161d",
+  "maize": "#fcf050",
+  "tufts-blue": "#4091da",
+  "flame": "#ea6135",
+  "mantis": "#55b64f",
+  "amber": "#f9be1c",
+  "off-red": "#fe0000",
+  "non-photo-blue": "#a2e7fa"
 }
