@@ -46,15 +46,46 @@ function collectColorValues(value, path = []) {
   return [];
 }
 
-const [manifest, palette, theme, testWorkspace] = await Promise.all([
+function normalizeColorBase(value) {
+  const raw = value.slice(1).toLowerCase();
+  const expanded = raw.length === 3 || raw.length === 4
+    ? raw.split("").map((character) => character + character).join("")
+    : raw;
+
+  return `#${expanded.slice(0, 6)}`;
+}
+
+const radioheadColorFamilies = [
+  "maize",
+  "tufts-blue",
+  "flame",
+  "mantis",
+  "amber",
+  "off-red",
+  "non-photo-blue"
+];
+
+function isNeutralColorName(name) {
+  return name === "pure-black"
+    || name === "pure-white"
+    || name === "rainbow-white"
+    || name === "eigengrau"
+    || name.startsWith("eigengrau-");
+}
+
+function isRadioheadColorName(name) {
+  return radioheadColorFamilies.includes(name);
+}
+
+const [manifest, palette, testWorkspace] = await Promise.all([
   readJson("package.json"),
   readJson("colors.json"),
-  readJson("themes/dark.json"),
   readJson(".vscode/theme-test.code-workspace")
 ]);
 
 const contributedThemes = manifest.contributes?.themes ?? [];
 const contributedLabels = contributedThemes.map((item) => item.label);
+const allowedUiThemes = new Set(["vs", "vs-dark", "hc-black", "hc-light"]);
 
 assert(manifest.name, "package.json must include a name.");
 assert(manifest.displayName, "package.json must include a displayName.");
@@ -65,10 +96,6 @@ assert(manifest.repository?.url && !manifest.repository.url.includes("TODO"), "p
 assert(manifest.scripts?.validate === "node scripts/validate-theme.mjs", "package.json must expose npm run validate.");
 assert(manifest.scripts?.["vscode:prepublish"] === "npm run validate", "package.json must validate before publishing.");
 assert(Array.isArray(contributedThemes) && contributedThemes.length > 0, "package.json must contribute at least one theme.");
-assert(theme.name, "Theme must include a name.");
-assert(theme.colors && typeof theme.colors === "object", "Theme must include a colors object.");
-assert(Array.isArray(theme.tokenColors), "Theme must include a tokenColors array.");
-assert(contributedLabels.includes(theme.name), `Theme name "${theme.name}" must match a contributed theme label.`);
 
 if (manifest.icon) {
   await assertFileExists(manifest.icon);
@@ -76,10 +103,21 @@ if (manifest.icon) {
 
 for (const contribution of contributedThemes) {
   assert(contribution.label, "Each contributed theme must include a label.");
-  assert(contribution.uiTheme === "vs-dark", `${contribution.label} must use uiTheme "vs-dark".`);
+  assert(allowedUiThemes.has(contribution.uiTheme), `${contribution.label} must use a valid uiTheme.`);
   assert(contribution.path, `${contribution.label} must include a theme path.`);
 
   await assertFileExists(contribution.path);
+
+  const theme = await readJson(contribution.path);
+
+  assert(theme.name, `${contribution.path} must include a name.`);
+  assert(theme.name === contribution.label, `${contribution.path} name must match its contributed theme label.`);
+  assert(theme.colors && typeof theme.colors === "object", `${contribution.path} must include a colors object.`);
+  assert(Array.isArray(theme.tokenColors), `${contribution.path} must include a tokenColors array.`);
+
+  for (const { path, value } of collectColorValues(theme)) {
+    assert(colorPattern.test(value), `Theme color at "${contribution.path}:${path}" is not a valid hex color.`);
+  }
 }
 
 assert(
@@ -88,11 +126,60 @@ assert(
 );
 
 for (const [name, value] of Object.entries(palette)) {
+  if (name.startsWith("_")) {
+    continue;
+  }
+
   assert(colorPattern.test(value), `colors.json entry "${name}" is not a valid hex color.`);
+  assert(
+    isNeutralColorName(name) || isRadioheadColorName(name),
+    `colors.json entry "${name}" must be either an Eigengrau neutral or a Radiohead base color.`
+  );
 }
 
-for (const { path, value } of collectColorValues(theme)) {
-  assert(colorPattern.test(value), `Theme color at "${path}" is not a valid hex color.`);
+const paletteEntries = Object.entries(palette)
+  .filter(([name]) => !name.startsWith("_"))
+  .map(([name, value]) => ({
+    name,
+    value,
+    base: normalizeColorBase(value)
+  }));
+
+const paletteNamesByBase = new Map();
+
+for (const { name, base } of paletteEntries) {
+  const existingNames = paletteNamesByBase.get(base) ?? [];
+  paletteNamesByBase.set(base, [...existingNames, name]);
+}
+
+const documentedPaletteBases = new Set(
+  Object.entries(palette)
+    .filter(([name]) => !name.startsWith("_"))
+    .map(([, value]) => normalizeColorBase(value))
+);
+
+for (const requiredColor of ["#000000", "#ffffff", "#16161d", "#f5f5fa"]) {
+  assert(documentedPaletteBases.has(requiredColor), `colors.json must include ${requiredColor}.`);
+}
+
+for (const contribution of contributedThemes) {
+  const theme = await readJson(contribution.path);
+
+  for (const { path, value } of collectColorValues(theme)) {
+    const baseColor = normalizeColorBase(value);
+    const paletteNames = paletteNamesByBase.get(baseColor) ?? [];
+    const isNeutral = paletteNames.some(isNeutralColorName);
+    const isRadioheadColor = paletteNames.some(isRadioheadColorName);
+
+    assert(
+      documentedPaletteBases.has(baseColor),
+      `Theme color at "${contribution.path}:${path}" uses ${value}, but base ${baseColor} is not documented in colors.json.`
+    );
+    assert(
+      isNeutral || isRadioheadColor,
+      `Theme color at "${contribution.path}:${path}" uses ${value}, but base ${baseColor} is not an Eigengrau neutral or a Radiohead base color.`
+    );
+  }
 }
 
 console.log("Theme validation passed.");

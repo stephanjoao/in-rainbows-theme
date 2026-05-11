@@ -1,7 +1,7 @@
 {
   "name": "in-rainbows-theme",
   "displayName": "In Rainbows Theme",
-  "description": "A VS Code dark theme inspired by Radiohead's In Rainbows.",
+  "description": "VS Code color themes inspired by Radiohead's In Rainbows.",
   "version": "0.0.2",
   "icon": "icon.png",
   "publisher": "joaostephan",
@@ -23,6 +23,7 @@
   "keywords": [
     "theme",
     "dark",
+    "light",
     "in rainbows",
     "radiohead"
   ],
@@ -36,6 +37,11 @@
         "label": "In Rainbows Dark",
         "uiTheme": "vs-dark",
         "path": "./themes/dark.json"
+      },
+      {
+        "label": "In Rainbows Light",
+        "uiTheme": "vs",
+        "path": "./themes/light.json"
       }
     ]
   }
